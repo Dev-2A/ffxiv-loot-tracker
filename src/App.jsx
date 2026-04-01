@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RoomProvider from "./contexts/RoomProvider";
 import Layout from "./components/common/Layout";
 import Home from "./pages/Home";
+import CreateRoom from "./pages/CreateRoom";
+import Room from "./pages/Room";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -11,10 +13,8 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
-            {/* 이후 단계에서 추가될 라우트 */}
-            {/* <Route path="/create" element={<CreateRoom />} /> */}
-            {/* <Route path="/join" element={<JoinRoom />} /> */}
-            {/* <Route path="/room/:roomId" element={<Room />} /> */}
+            <Route path="/create" element={<CreateRoom />} />
+            <Route path="/room/:roomId" element={<Room />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
