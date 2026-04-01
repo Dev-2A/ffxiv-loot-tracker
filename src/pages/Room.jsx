@@ -6,6 +6,7 @@ import { useRoom } from "../contexts/RoomContext";
 import useRealtimeRoom from "../hooks/useRealtimeRoom";
 import LootItemForm from "../components/loot/LootItemForm";
 import LootList from "../components/loot/LootList";
+import BidPanel from "../components/loot/BidPanel";
 
 export default function Room() {
   const { roomId } = useParams();
@@ -285,14 +286,25 @@ export default function Room() {
               onDelete={handleDeleteItem}
             />
 
-            {/* 선택된 아이템 상세 (다음 단계에서 입찰 UI로 교체) */}
-            {selectedItem && selectedItem.status === "bidding" && (
-              <div className="mt-4 p-4 bg-ff-dark rounded-lg border border-ff-accent/30">
-                <h3 className="text-sm font-bold text-ff-accent mb-2">
-                  🎯 선택된 아이템: {selectedItem.name}
+            {/* 선택된 아이템 입찰 패널 */}
+            {selectedItem && selectedItem.status === 'bidding' && (
+              <BidPanel
+                item={selectedItem}
+                currentUser={currentUser}
+                members={members}
+                ruleType={room?.rule_type}
+                onBidsUpdate={() => {}}
+              />
+            )}
+
+            {/* 분배 완료된 아이템 선택 시 */}
+            {selectedItem && selectedItem.status === 'distributed' && (
+              <div className="mt-4 p-4 bg-ff-dark rounded-lg border border-green-500/30">
+                <h3 className="text-sm font-bold text-green-300 mb-1">
+                  ✅ {selectedItem.name}
                 </h3>
                 <p className="text-ff-muted text-sm">
-                  입찰/패스 UI는 Step 8에서 구현됩니다.
+                  🏆 획득자: {selectedItem.winner?.nickname || '알 수 없음'}
                 </p>
               </div>
             )}
