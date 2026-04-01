@@ -7,6 +7,7 @@ import useRealtimeRoom from "../hooks/useRealtimeRoom";
 import LootItemForm from "../components/loot/LootItemForm";
 import LootList from "../components/loot/LootList";
 import BidPanel from "../components/loot/BidPanel";
+import DistributionHistory from "../components/loot/DistributionHistory";
 
 export default function Room() {
   const { roomId } = useParams();
@@ -25,6 +26,7 @@ export default function Room() {
   const [lootItems, setLootItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [historyKey, setHistoryKey] = useState(0);
 
   // 데이터 로드 함수
   const loadMembers = useCallback(async () => {
@@ -300,6 +302,7 @@ export default function Room() {
                   await loadLootItems();
                   await loadMembers();
                   setSelectedItem(null);
+                  setHistoryKey((prev) => prev + 1);
                 }}
               />
             )}
@@ -316,6 +319,11 @@ export default function Room() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* 하단: 분배 히스토리 (전체 너비) */}
+        <div className="lg:col-span-3">
+          <DistributionHistory roomId={roomId} refreshKey={historyKey} />
         </div>
       </div>
     </div>

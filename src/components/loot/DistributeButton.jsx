@@ -6,6 +6,7 @@ import {
   deductDKP,
   discardLootItem,
 } from "../../lib/loot";
+import DistributionResult from "./DistributionResult";
 
 export default function DistributeButton({
   item,
@@ -20,7 +21,6 @@ export default function DistributeButton({
   const handleDistribute = async () => {
     if (isProcessing) return;
 
-    // 입찰 현황 최신 조회
     const { bids } = await getBidsForItem(item.id);
 
     if (bids.length === 0) {
@@ -33,6 +33,11 @@ export default function DistributeButton({
       const doDiscard = confirm("모두 패스했습니다. 이 아이템을 폐기할까요?");
       if (doDiscard) {
         await discardLootItem(item.id);
+        setResult({
+          winner: null,
+          itemName: item.name,
+          reason: "모두 패스하여 폐기되었습니다.",
+        });
         if (onDistributed) onDistributed();
       }
       return;
@@ -40,16 +45,18 @@ export default function DistributeButton({
 
     setIsProcessing(true);
 
-    // 분배 엔진 실행
     const { winnerId, reason, dkpSpent } = distribute(ruleType, bids, members);
 
     if (!winnerId) {
-      setResult({ winner: null, reason });
+      setResult({
+        winner: null,
+        itemName: item.name,
+        reason,
+      });
       setIsProcessing(false);
       return;
     }
 
-    // DB에 분배 결과 기록
     const { error } = await recordDistribution({
       roomId,
       lootItemId: item.id,
@@ -65,7 +72,6 @@ export default function DistributeButton({
       return;
     }
 
-    // DKP 모드면 포인트 차감
     if (ruleType === "dkp" && dkpSpent > 0) {
       await deductDKP(winnerId, dkpSpent);
     }
@@ -73,6 +79,7 @@ export default function DistributeButton({
     const winnerMember = members.find((m) => m.id === winnerId);
     setResult({
       winner: winnerMember,
+      itemName: item.name,
       reason,
       dkpSpent: dkpSpent || 0,
     });
@@ -83,34 +90,6 @@ export default function DistributeButton({
 
   return (
     <div className="mt-4">
-      {/* 분배 결과 */}
-      {result && (
-        <div
-          className={`mb-3 p-3 rounded-lg border ${
-            result.winner
-              ? "bg-green-900/20 border-green-500/30"
-              : "bg-gray-900/20 border-gray-500/30"
-          }`}
-        >
-          {result.winner ? (
-            <div className="text-center">
-              <p className="text-2xl mb-1">🎉</p>
-              <p className="text-green-300 font-bold text-lg">
-                {result.winner.nickname} 획득!
-              </p>
-              <p className="text-ff-muted text-xs mt-1">{result.reason}</p>
-              {result.dkpSpent > 0 && (
-                <p className="text-ff-gold text-xs mt-1">
-                  💰 DKP {result.dkpSpent} 소비
-                </p>
-              )}
-            </div>
-          ) : (
-            <p className="text-gray-300 text-center text-sm">{result.reason}</p>
-          )}
-        </div>
-      )}
-
       {/* 분배 실행 버튼 */}
       {item.status === "bidding" && (
         <button
@@ -130,6 +109,11 @@ export default function DistributeButton({
                     : "우선권"
               })`}
         </button>
+      )}
+
+      {/* 결과 모달 */}
+      {result && (
+        <DistributionResult result={result} onClose={() => setResult(null)} />
       )}
     </div>
   );
