@@ -133,3 +133,38 @@ export async function getDistributionLog(roomId) {
 
   return { logs: data || [], error };
 }
+
+/**
+ * DKP 포인트 차감
+ */
+export async function deductDKP(memberId, amount) {
+  // 현재 포인트 조회
+  const { data: member, error: fetchError } = await supabase
+    .from("members")
+    .select("dkp_points")
+    .eq("id", memberId)
+    .single();
+
+  if (fetchError) return { error: fetchError };
+
+  const newPoints = Math.max(0, member.dkp_points - amount);
+
+  const { error: updateError } = await supabase
+    .from("members")
+    .update({ dkp_points: newPoints })
+    .eq("id", memberId);
+
+  return { error: updateError };
+}
+
+/**
+ * 전리품 아이템 폐기 처리
+ */
+export async function discardLootItem(itemId) {
+  const { error } = await supabase
+    .from("loot_items")
+    .update({ status: "discarded" })
+    .eq("id", itemId);
+
+  return { error };
+}

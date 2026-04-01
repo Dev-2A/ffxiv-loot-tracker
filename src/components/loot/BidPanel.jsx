@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { placeBid, getBidsForItem } from "../../lib/loot";
 import useRealtimeBids from "../../hooks/useRealtimeBids";
+import DistributeButton from "./DistributeButton";
 
 const BID_OPTIONS = [
   {
@@ -28,7 +29,10 @@ export default function BidPanel({
   currentUser,
   members,
   ruleType,
+  roomId,
+  isHost,
   onBidsUpdate,
+  onDistributed,
 }) {
   const [bids, setBids] = useState([]);
   const [myBid, setMyBid] = useState(null);
@@ -50,9 +54,12 @@ export default function BidPanel({
     loadBids();
   }, [loadBids]);
 
-  useRealtimeBids(item.id, useCallback(() => {
-    loadBids();
-  }, [loadBids]));
+  useRealtimeBids(
+    item.id,
+    useCallback(() => {
+      loadBids();
+    }, [loadBids]),
+  );
 
   // 입찰 제출
   const handleBid = async (bidType) => {
@@ -200,6 +207,17 @@ export default function BidPanel({
           })}
         </div>
       </div>
+
+      {/* 분배 버튼 (방장만) */}
+      {isHost && item.status === "bidding" && (
+        <DistributeButton
+          item={item}
+          members={members}
+          ruleType={ruleType}
+          roomId={roomId}
+          onDistributed={onDistributed}
+        />
+      )}
     </div>
   );
 }

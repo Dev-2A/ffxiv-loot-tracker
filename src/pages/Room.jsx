@@ -287,24 +287,31 @@ export default function Room() {
             />
 
             {/* 선택된 아이템 입찰 패널 */}
-            {selectedItem && selectedItem.status === 'bidding' && (
+            {selectedItem && selectedItem.status === "bidding" && (
               <BidPanel
                 item={selectedItem}
                 currentUser={currentUser}
                 members={members}
                 ruleType={room?.rule_type}
+                roomId={roomId}
+                isHost={isHost}
                 onBidsUpdate={() => {}}
+                onDistributed={async () => {
+                  await loadLootItems();
+                  await loadMembers();
+                  setSelectedItem(null);
+                }}
               />
             )}
 
             {/* 분배 완료된 아이템 선택 시 */}
-            {selectedItem && selectedItem.status === 'distributed' && (
+            {selectedItem && selectedItem.status === "distributed" && (
               <div className="mt-4 p-4 bg-ff-dark rounded-lg border border-green-500/30">
                 <h3 className="text-sm font-bold text-green-300 mb-1">
                   ✅ {selectedItem.name}
                 </h3>
                 <p className="text-ff-muted text-sm">
-                  🏆 획득자: {selectedItem.winner?.nickname || '알 수 없음'}
+                  🏆 획득자: {selectedItem.winner?.nickname || "알 수 없음"}
                 </p>
               </div>
             )}
