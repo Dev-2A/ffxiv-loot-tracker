@@ -1,13 +1,25 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RoomProvider from "./contexts/RoomProvider";
+import Layout from "./components/common/Layout";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-ff-gold mb-4">
-          🎮 FFXIV 전리품 분배 도우미
-        </h1>
-        <p className="text-ff-muted">프로젝트 초기 설정 완료!</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <RoomProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            {/* 이후 단계에서 추가될 라우트 */}
+            {/* <Route path="/create" element={<CreateRoom />} /> */}
+            {/* <Route path="/join" element={<JoinRoom />} /> */}
+            {/* <Route path="/room/:roomId" element={<Room />} /> */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </RoomProvider>
+    </BrowserRouter>
   );
 }
 
