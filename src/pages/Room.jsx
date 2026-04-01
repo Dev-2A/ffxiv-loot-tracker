@@ -8,6 +8,7 @@ import LootItemForm from "../components/loot/LootItemForm";
 import LootList from "../components/loot/LootList";
 import BidPanel from "../components/loot/BidPanel";
 import DistributionHistory from "../components/loot/DistributionHistory";
+import DKPManager from "../components/room/DKPManager";
 
 export default function Room() {
   const { roomId } = useParams();
@@ -233,6 +234,19 @@ export default function Room() {
               ))}
             </div>
           </div>
+
+          {/* DKP 관리 (DKP 모드일 때만) */}
+          {room?.rule_type === "dkp" && (
+            <DKPManager
+              roomId={roomId}
+              members={members}
+              isHost={isHost}
+              currentUser={currentUser}
+              onUpdate={async () => {
+                await loadMembers();
+              }}
+            />
+          )}
 
           {/* 초대 링크 */}
           <div className="bg-ff-surface rounded-lg p-4 border border-ff-blue/30">
