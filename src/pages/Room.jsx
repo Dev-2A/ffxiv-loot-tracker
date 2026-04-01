@@ -9,6 +9,7 @@ import LootList from "../components/loot/LootList";
 import BidPanel from "../components/loot/BidPanel";
 import DistributionHistory from "../components/loot/DistributionHistory";
 import DKPManager from "../components/room/DKPManager";
+import CopyButton from "../components/common/CopyButton";
 
 export default function Room() {
   const { roomId } = useParams();
@@ -250,9 +251,7 @@ export default function Room() {
 
           {/* 초대 링크 */}
           <div className="bg-ff-surface rounded-lg p-4 border border-ff-blue/30">
-            <h2 className="text-sm font-bold text-ff-text mb-2">
-              🔗 초대 링크
-            </h2>
+            <h2 className="text-sm font-bold text-ff-text mb-2">🔗 초대 링크</h2>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -261,18 +260,7 @@ export default function Room() {
                 className="flex-1 px-2 py-1.5 bg-ff-dark border border-ff-blue/20 rounded
                            text-ff-muted text-xs"
               />
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/join/${roomId}`,
-                  );
-                  alert("복사 완료!");
-                }}
-                className="px-3 py-1.5 bg-ff-blue text-white rounded text-xs font-medium
-                           hover:bg-ff-blue/80 transition-colors"
-              >
-                복사
-              </button>
+              <CopyButton text={`${window.location.origin}/join/${roomId}`} />
             </div>
           </div>
         </div>
