@@ -142,7 +142,8 @@ SQL Editor에서 아래 순서로 실행:
 
 ## DB 스키마
 
-```textrooms ─── 1:N ─── members
+```text
+rooms ─── 1:N ─── members
   │                  │
   └── 1:N ── loot_items
                 │       │
